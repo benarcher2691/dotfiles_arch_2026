@@ -10,6 +10,7 @@
     "modules-center": [],
     "modules-right": [
         "idle_inhibitor",
+        "bluetooth",
         "pulseaudio",
         "network",
         "cpu",
@@ -29,6 +30,16 @@
             "activated": "󰈈",
             "deactivated": "󰈉"
         }
+    },
+    "bluetooth": {
+        "format": "󰂯 {status}",
+        "format-connected": "󰂯 {device_alias}",
+        "format-connected-battery": "󰂯 {device_alias} {device_battery_percentage}%",
+        "tooltip-format": "{controller_alias}\n{num_connections} connected",
+        "tooltip-format-connected": "{controller_alias}\n{num_connections} connected\n\n{device_enumerate}",
+        "tooltip-format-enumerate-connected": "{device_alias}",
+        "tooltip-format-enumerate-connected-battery": "{device_alias}\t{device_battery_percentage}%",
+        "on-click": "blueman-manager"
     },
     "tray": {
         "spacing": 10
