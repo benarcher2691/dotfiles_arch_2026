@@ -42,6 +42,7 @@
         "on-click": "blueman-manager"
     },
     "tray": {
+        "icon-size": 20,
         "spacing": 10
     },
     "clock": {
