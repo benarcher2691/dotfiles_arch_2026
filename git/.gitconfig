@@ -1,7 +1,3 @@
-[user]
-	name = Ben Archer
-	email = ben.archer2691@gmail.com
-
 [alias]
 	ci = commit
 	co = checkout
