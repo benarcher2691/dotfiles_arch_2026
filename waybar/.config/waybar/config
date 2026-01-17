@@ -10,6 +10,7 @@
     "modules-center": [],
     "modules-right": [
         "idle_inhibitor",
+        "custom/dnd",
         "cpu",
         "memory",
         "temperature",
@@ -30,6 +31,12 @@
             "activated": "󰈈",
             "deactivated": "󰈉"
         }
+    },
+    "custom/dnd": {
+        "exec": "makoctl mode | grep -q do-not-disturb && echo 󰍶 || echo 󰍩",
+        "on-click": "makoctl mode -t do-not-disturb && pkill -SIGRTMIN+1 waybar",
+        "interval": 1,
+        "tooltip-format": "Focus mode (Do Not Disturb)"
     },
     "bluetooth": {
         "format": "󰂯 {status}",
