@@ -48,3 +48,7 @@ export SDKMAN_DIR="$HOME/.sdkman"
 
 # Wayland
 export MOZ_ENABLE_WAYLAND=1
+
+# fzf integration
+[ -f /usr/share/fzf/key-bindings.bash ] && source /usr/share/fzf/key-bindings.bash
+[ -f /usr/share/fzf/completion.bash ] && source /usr/share/fzf/completion.bash
