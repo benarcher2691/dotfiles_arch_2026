@@ -175,3 +175,10 @@ button:hover {
     background-color: #504945;
     color: #fabd2f;
 }
+
+#custom-spotify {
+    background-color: #3c3836;
+    color: #1db954;
+    padding: 0 10px;
+    margin: 2px 1px;
+}

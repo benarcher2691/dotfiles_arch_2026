@@ -7,7 +7,9 @@
         "hyprland/workspaces",
         "hyprland/submap"
     ],
-    "modules-center": [],
+    "modules-center": [
+        "custom/spotify"
+    ],
     "modules-right": [
         "idle_inhibitor",
         "custom/dnd",
@@ -37,6 +39,16 @@
         "on-click": "makoctl mode -t do-not-disturb && pkill -SIGRTMIN+1 waybar",
         "interval": 1,
         "tooltip-format": "Focus mode (Do Not Disturb)"
+    },
+    "custom/spotify": {
+        "exec": "playerctl -p spotify status 2>/dev/null | grep -q Playing && playerctl -p spotify metadata --format '{{artist}} - {{title}}'",
+        "interval": 1,
+        "format": "󰓇 {}",
+        "max-length": 40,
+        "on-click": "playerctl -p spotify play-pause",
+        "on-scroll-up": "playerctl -p spotify next",
+        "on-scroll-down": "playerctl -p spotify previous",
+        "tooltip": false
     },
     "bluetooth": {
         "format": "󰂯 {status}",
