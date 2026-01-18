@@ -7,6 +7,20 @@
         "hyprland/workspaces",
         "hyprland/submap"
     ],
+    "hyprland/workspaces": {
+        "format": "{icon}",
+        "format-icons": {
+            "1": ">_",
+            "2": "󰖟",
+            "3": "󰉋",
+            "4": "󰄪",
+            "5": "󰎆",
+            "default": ""
+        },
+        "persistent-workspaces": {
+            "*": [1, 2, 3, 4, 5]
+        }
+    },
     "modules-center": [
         "custom/spotify"
     ],
