@@ -65,3 +65,9 @@ chars = "\u001B[13;2u"
 key = "Escape"
 mode = "Vi"
 action = "ToggleViMode"
+
+[[keyboard.bindings]]
+key = "V"
+mods = "Alt"
+mode = "~Vi"
+action = "ToggleViMode"
