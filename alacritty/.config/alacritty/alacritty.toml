@@ -60,3 +60,8 @@ white = "#a6adc8"
 key = "Return"
 mods = "Shift"
 chars = "\u001B[13;2u"
+
+[[keyboard.bindings]]
+key = "Escape"
+mode = "Vi"
+action = "ToggleViMode"
