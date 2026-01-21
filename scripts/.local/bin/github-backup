@@ -2,7 +2,7 @@
 set -uo pipefail
 
 OWNER="${1:-YOUR_ORG_OR_USER}"
-BACKUP_DIR="${2:-/mnt/backup/github/$OWNER}"
+BACKUP_DIR="${2:-$HOME/backups/github/$OWNER}"
 FAILED=()
 
 mkdir -p "$BACKUP_DIR"
