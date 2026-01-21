@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -uo pipefail
+
+OWNER="${1:-YOUR_ORG_OR_USER}"
+BACKUP_DIR="${2:-/mnt/backup/github/$OWNER}"
+FAILED=()
+
+mkdir -p "$BACKUP_DIR"
+
+gh repo list "$OWNER" --limit 1000 --json nameWithOwner -q '.[].nameWithOwner' |
+while IFS= read -r full; do
+  name="${full##*/}"
+  dest="$BACKUP_DIR/$name.git"
+  url="git@github.com:$full.git"
+
+  echo "==> $full"
+  if [[ -d "$dest" ]]; then
+    git -C "$dest" remote update --prune || { FAILED+=("$full"); continue; }
+  else
+    git clone --mirror "$url" "$dest" || { FAILED+=("$full"); continue; }
+  fi
+  git -C "$dest" lfs fetch --all 2>/dev/null || true
+
+  # Backup wiki if it exists
+  wiki_url="git@github.com:$full.wiki.git"
+  wiki_dest="$BACKUP_DIR/$name.wiki.git"
+  if git ls-remote "$wiki_url" &>/dev/null; then
+    echo "    wiki: $name.wiki"
+    if [[ -d "$wiki_dest" ]]; then
+      git -C "$wiki_dest" remote update --prune || true
+    else
+      git clone --mirror "$wiki_url" "$wiki_dest" || true
+    fi
+  fi
+done
+
+if [[ ${#FAILED[@]} -gt 0 ]]; then
+  echo "FAILED: ${FAILED[*]}"
+  exit 1
+fi
