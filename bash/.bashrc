@@ -12,8 +12,15 @@ shopt -s histappend
 # Check window size after each command
 shopt -s checkwinsize
 
-# Prompt
-PS1='\[\033[01;34m\]\w\[\033[00m\]\$ '
+# Prompt with git branch and dirty indicator
+__git_prompt() {
+  local branch dirty
+  branch=$(git symbolic-ref --short HEAD 2>/dev/null) || return
+  dirty=$(git status --porcelain 2>/dev/null | head -1)
+  [[ -n "$dirty" ]] && branch+="*"
+  echo " ($branch)"
+}
+PS1='\[\033[01;34m\]\w\[\033[01;33m\]$(__git_prompt)\[\033[00m\]\$ '
 
 # Aliases
 alias ls='ls --color=auto'

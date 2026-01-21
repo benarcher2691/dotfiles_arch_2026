@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+#
+# Restore a repo from local backup for offline work.
+# Sets remote to GitHub so pushes go to the right place when online.
+#
+# Usage: github-restore <repo-name> [dest]
+#
+set -euo pipefail
+
+OWNER="${GITHUB_USER:-benarcher2691}"
+BACKUP_BASE="$HOME/backups/github/$OWNER"
+
+if [[ $# -lt 1 ]]; then
+  echo "Usage: github-restore <repo-name> [dest]"
+  echo ""
+  echo "Available backups:"
+  ls "$BACKUP_BASE" 2>/dev/null | sed 's/\.git$//' | sort
+  exit 1
+fi
+
+REPO="$1"
+DEST="${2:-$(pwd)/$REPO}"
+BACKUP_PATH="$BACKUP_BASE/$REPO.git"
+GITHUB_URL="git@github.com:$OWNER/$REPO.git"
+
+# Check backup exists
+if [[ ! -d "$BACKUP_PATH" ]]; then
+  echo "Error: No backup found at $BACKUP_PATH"
+  echo ""
+  echo "Available backups:"
+  ls "$BACKUP_BASE" 2>/dev/null | sed 's/\.git$//' | sort
+  exit 1
+fi
+
+if [[ -d "$DEST/.git" ]]; then
+  # Repo exists - ensure remote is correct
+  echo "Repo exists at $DEST"
+  current_url=$(git -C "$DEST" remote get-url origin 2>/dev/null || echo "")
+
+  if [[ "$current_url" == "$GITHUB_URL" ]]; then
+    echo "Remote already set to GitHub"
+  else
+    echo "Updating remote: $current_url -> $GITHUB_URL"
+    git -C "$DEST" remote set-url origin "$GITHUB_URL"
+  fi
+
+  # Fetch latest from backup
+  echo "Fetching latest from backup..."
+  git -C "$DEST" fetch "$BACKUP_PATH" '+refs/heads/*:refs/remotes/backup/*' 2>/dev/null || true
+
+elif [[ -e "$DEST" ]]; then
+  echo "Error: $DEST exists but is not a git repository"
+  exit 1
+
+else
+  # Fresh clone
+  echo "Cloning from backup: $BACKUP_PATH"
+  git clone "$BACKUP_PATH" "$DEST"
+
+  echo "Setting remote to GitHub: $GITHUB_URL"
+  git -C "$DEST" remote set-url origin "$GITHUB_URL"
+fi
+
+echo ""
+echo "Ready to work offline. When online, 'git push' goes to GitHub."
