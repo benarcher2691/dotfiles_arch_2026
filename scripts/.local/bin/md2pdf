@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+#
+# Convert Markdown to PDF with sensible defaults.
+# Uses pandoc with LaTeX, A4 paper, and code line wrapping.
+#
+# Usage: md2pdf <input.md> [output.pdf]
+#
+set -euo pipefail
+
+if [[ $# -lt 1 ]]; then
+  echo "Usage: md2pdf <input.md> [output.pdf]"
+  exit 1
+fi
+
+INPUT="$1"
+OUTPUT="${2:-${INPUT%.md}.pdf}"
+
+if [[ ! -f "$INPUT" ]]; then
+  echo "Error: File not found: $INPUT"
+  exit 1
+fi
+
+# Create temp header for code wrapping
+HEADER=$(mktemp)
+trap 'rm -f "$HEADER"' EXIT
+
+cat > "$HEADER" << 'EOF'
+\usepackage{fvextra}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,breakanywhere,commandchars=\\\{\}}
+EOF
+
+pandoc "$INPUT" -o "$OUTPUT" \
+  -V geometry:a4paper \
+  -V geometry:margin=2.5cm \
+  -H "$HEADER"
+
+echo "Created: $OUTPUT"
