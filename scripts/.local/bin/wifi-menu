@@ -1,0 +1,107 @@
+#!/bin/bash
+# WiFi menu using wofi with grouped sections
+
+STYLE="--style /home/ben/.config/wofi/style.css"
+
+# Get current connection
+CURRENT=$(nmcli -t -f NAME connection show --active | head -1)
+
+# Build menu with sections
+{
+    echo "─── Actions ───"
+
+    # Toggle WiFi
+    if nmcli radio wifi | grep -q "enabled"; then
+        echo "󰖪  Disable WiFi"
+    else
+        echo "󰖩  Enable WiFi"
+    fi
+
+    echo "󰑓  Rescan networks"
+    echo "󰒓  Edit connections"
+
+    echo ""
+    echo "─── Networks ───"
+
+    # List available networks (deduplicated, sorted by signal)
+    nmcli -t -f SSID,SECURITY,SIGNAL device wifi list | \
+        awk -F: 'seen[$1]++ == 0 && $1 != "" {
+            signal = $3
+            if (signal >= 75) bars = "▂▄▆█"
+            else if (signal >= 50) bars = "▂▄▆ "
+            else if (signal >= 25) bars = "▂▄  "
+            else bars = "▂   "
+
+            sec = ($2 != "") ? "󰌾" : "󰌿"
+            printf "%s  %s  %s  %s\n", $1, sec, bars, signal"%"
+        }' | sort -t'%' -k1 -rn | cut -d'%' -f1
+
+} | wofi --dmenu --prompt "WiFi" $STYLE --sort-order=default | {
+    read CHOICE
+
+    case "$CHOICE" in
+        "󰖪  Disable WiFi")
+            nmcli radio wifi off
+            notify-send "WiFi" "Disabled"
+            ;;
+        "󰖩  Enable WiFi")
+            nmcli radio wifi on
+            notify-send "WiFi" "Enabled"
+            ;;
+        "󰑓  Rescan networks")
+            nmcli device wifi rescan
+            sleep 2
+            exec "$0"
+            ;;
+        "󰒓  Edit connections")
+            alacritty -e bash -c 'NEWT_COLORS="
+root=,#282828
+window=#ebdbb2,#3c3836
+border=#d79921,#3c3836
+shadow=#282828,#282828
+title=#fabd2f,#3c3836
+button=#282828,#d79921
+actbutton=#282828,#fabd2f
+compactbutton=#ebdbb2,#3c3836
+checkbox=#ebdbb2,#3c3836
+actcheckbox=#282828,#8ec07c
+entry=#ebdbb2,#504945
+disentry=#928374,#3c3836
+label=#ebdbb2,#3c3836
+listbox=#ebdbb2,#3c3836
+actlistbox=#282828,#83a598
+sellistbox=#282828,#689d6a
+actsellistbox=#282828,#8ec07c
+textbox=#ebdbb2,#3c3836
+acttextbox=#282828,#83a598
+helpline=#928374,#282828
+roottext=#ebdbb2,#282828
+emptyscale=#504945
+fullscale=#8ec07c
+" nmtui' &
+            ;;
+        "─"*|"")
+            # Separator or empty, ignore
+            ;;
+        *)
+            # Extract SSID (first field before the security icon)
+            SSID=$(echo "$CHOICE" | sed 's/  .*//')
+            if [ -n "$SSID" ]; then
+                # Check if already saved
+                if nmcli -t -f NAME connection show | grep -qx "$SSID"; then
+                    nmcli connection up "$SSID" && \
+                        notify-send "WiFi" "Connected to $SSID" || \
+                        notify-send "WiFi" "Failed to connect to $SSID"
+                else
+                    # New network - prompt for password
+                    PASS=$(echo "" | wofi --dmenu --prompt "Password for $SSID" $STYLE --password)
+                    if [ -n "$PASS" ]; then
+                        nmcli device wifi connect "$SSID" password "$PASS" && \
+                            notify-send "WiFi" "Connected to $SSID" || \
+                            notify-send "WiFi" "Failed to connect to $SSID"
+                    fi
+                fi
+            fi
+            ;;
+    esac
+}
