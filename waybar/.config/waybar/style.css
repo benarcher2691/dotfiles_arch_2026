@@ -27,8 +27,11 @@ button:hover {
 
 #workspaces button {
     padding: 0 5px;
+    margin: 4px 2px;
     background-color: transparent;
     color: #ebdbb2;
+    border: 1px solid #665c54;
+    border-radius: 4px;
 }
 
 #workspaces button:hover {
