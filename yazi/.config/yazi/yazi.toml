@@ -21,3 +21,13 @@ edit = [
 open = [
     { run = 'xdg-open "$@"', desc = "Open", for = "linux" },
 ]
+image = [
+    { run = 'imv "$@"', desc = "View image", for = "linux" },
+]
+
+[open]
+rules = [
+    { mime = "image/*", use = "image" },
+    { mime = "text/*", use = "edit" },
+    { mime = "*", use = "open" },
+]
