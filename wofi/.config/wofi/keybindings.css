@@ -1,0 +1,43 @@
+* {
+    font-family: monospace;
+    font-size: 22px;
+}
+
+window {
+    background-color: #282828;
+    border: 2px solid #d79921;
+    border-radius: 8px;
+}
+
+#input {
+    background-color: #3c3836;
+    color: #ebdbb2;
+    border: none;
+    border-bottom: 2px solid #504945;
+    padding: 8px;
+}
+
+#inner-box {
+    background-color: #282828;
+}
+
+#outer-box {
+    padding: 8px;
+}
+
+#entry {
+    padding: 6px;
+}
+
+#entry:selected {
+    background-color: #504945;
+    border-radius: 4px;
+}
+
+#text {
+    color: #ebdbb2;
+}
+
+#text:selected {
+    color: #fabd2f;
+}

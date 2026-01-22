@@ -1,0 +1,48 @@
+#!/bin/bash
+# Display Hyprland keybindings in wofi
+
+hyprctl binds | awk '
+BEGIN { FS=": " }
+/^bindd?$/ {
+    if (desc != "" && key != "") {
+        mod_str = ""
+        if (mod == 64) mod_str = "SUPER"
+        else if (mod == 65) mod_str = "SUPER SHIFT"
+        else if (mod == 68) mod_str = "SUPER CTRL"
+        else if (mod == 72) mod_str = "SUPER ALT"
+        else if (mod == 1) mod_str = "SHIFT"
+        else if (mod == 4) mod_str = "CTRL"
+        else if (mod == 8) mod_str = "ALT"
+        else if (mod == 0) mod_str = ""
+        else mod_str = "MOD(" mod ")"
+
+        if (mod_str != "")
+            printf "%s + %s\t⟶\t%s\n", mod_str, key, desc
+        else
+            printf "%s\t⟶\t%s\n", key, desc
+    }
+    mod = ""; key = ""; desc = ""
+}
+/modmask:/ { mod = $2 }
+/key:/ { key = $2 }
+/description:/ { desc = $2 }
+END {
+    if (desc != "" && key != "") {
+        mod_str = ""
+        if (mod == 64) mod_str = "SUPER"
+        else if (mod == 65) mod_str = "SUPER SHIFT"
+        else if (mod == 68) mod_str = "SUPER CTRL"
+        else if (mod == 72) mod_str = "SUPER ALT"
+        else if (mod == 1) mod_str = "SHIFT"
+        else if (mod == 4) mod_str = "CTRL"
+        else if (mod == 8) mod_str = "ALT"
+        else if (mod == 0) mod_str = ""
+        else mod_str = "MOD(" mod ")"
+
+        if (mod_str != "")
+            printf "%s + %s\t⟶\t%s\n", mod_str, key, desc
+        else
+            printf "%s\t⟶\t%s\n", key, desc
+    }
+}
+' | sort | column -t -s $'\t' | wofi --dmenu --prompt "Keybindings" --style ~/.config/wofi/keybindings.css
