@@ -59,3 +59,6 @@ export MOZ_ENABLE_WAYLAND=1
 # fzf integration
 [ -f /usr/share/fzf/key-bindings.bash ] && source /usr/share/fzf/key-bindings.bash
 [ -f /usr/share/fzf/completion.bash ] && source /usr/share/fzf/completion.bash
+
+# Bash completion
+[ -f /usr/share/bash-completion/bash_completion ] && source /usr/share/bash-completion/bash_completion
