@@ -3,7 +3,7 @@
 
 hyprctl binds | awk '
 BEGIN { FS=": " }
-/^bindd?$/ {
+/^bind/ {
     if (desc != "" && key != "") {
         mod_str = ""
         if (mod == 64) mod_str = "SUPER"
