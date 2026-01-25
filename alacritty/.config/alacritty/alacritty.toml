@@ -71,3 +71,8 @@ key = "V"
 mods = "Alt"
 mode = "~Vi"
 action = "ToggleViMode"
+
+[[keyboard.bindings]]
+key = "Insert"
+mods = "Shift"
+action = "Paste"
