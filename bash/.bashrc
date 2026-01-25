@@ -62,3 +62,4 @@ export MOZ_ENABLE_WAYLAND=1
 
 # Bash completion
 [ -f /usr/share/bash-completion/bash_completion ] && source /usr/share/bash-completion/bash_completion
+alias devpod="devpod-cli"
